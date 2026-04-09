@@ -19,13 +19,13 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
     const enhancedAssignments = useMemo(() => {
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-        
+
         return assignments.map(assignment => {
             // Find related course
             const course = courses.find(c => c.id === assignment.courseId);
             // Find related submission
             const submission = submissions.find(s => s.courseWorkId === assignment.id);
-            
+
             const isTurnedIn = submission?.state === 'TURNED_IN' || submission?.state === 'RETURNED';
 
             let dueDateObj: Date | null = null;
@@ -37,15 +37,15 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
                 // It also has dueTime (hours, minutes)
                 const hr = assignment.dueTime?.hours || 23;
                 const min = assignment.dueTime?.minutes || 59;
-                
+
                 dueDateObj = new Date(Date.UTC(
-                    assignment.dueDate.year, 
-                    assignment.dueDate.month - 1, 
-                    assignment.dueDate.day, 
-                    hr, 
+                    assignment.dueDate.year,
+                    assignment.dueDate.month - 1,
+                    assignment.dueDate.day,
+                    hr,
                     min
                 ));
-                
+
                 const timeDiff = dueDateObj.getTime() - now.getTime();
                 daysUntilDue = Math.ceil(timeDiff / (1000 * 3600 * 24));
                 isPastDue = timeDiff < 0;
@@ -66,7 +66,7 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
     // Apply filters
     const filteredAssignments = useMemo(() => {
         let filtered = enhancedAssignments;
-        
+
         if (filter === 'TODAY') {
             filtered = enhancedAssignments.filter(a => a.daysUntilDue !== null && a.daysUntilDue <= 1 && a.daysUntilDue >= 0);
         } else if (filter === '3DAYS') {
@@ -74,7 +74,7 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
         } else if (filter === '7DAYS') {
             filtered = enhancedAssignments.filter(a => a.daysUntilDue !== null && a.daysUntilDue <= 7 && a.daysUntilDue >= 0);
         }
-        
+
         // Include past due by default in all views unless it gets too much? 
         // We'll bring past due items to the top if they are missing
         if (filter !== 'ALL') {
@@ -136,7 +136,7 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col h-full max-h-[600px] overflow-hidden">
-            <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3">
+            <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-orange-100 text-orange-600 rounded-lg">
                         <CalendarDays size={20} />
@@ -144,7 +144,7 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
                     <h3 className="font-bold text-gray-800 tracking-tight">{t('todo.title')}</h3>
                 </div>
                 {/* Filters */}
-                <div className="grid grid-cols-2 min-[350px]:grid-cols-4 lg:flex lg:flex-wrap bg-gray-100 p-1 rounded-lg w-full gap-1">
+                <div className="flex flex-wrap sm:flex-nowrap bg-gray-100 p-1 rounded-lg w-full sm:w-auto gap-1">
                     {[
                         { key: 'ALL', label: t('todo.filterAll') },
                         { key: 'TODAY', label: t('todo.filterToday') },
@@ -154,7 +154,7 @@ const UnifiedTodo: React.FC<UnifiedTodoProps> = ({ courses, assignments, submiss
                         <button
                             key={f.key}
                             onClick={() => setFilter(f.key as FilterType)}
-                            className={`flex-1 px-1 sm:px-2 py-1.5 text-[10px] sm:text-xs font-semibold rounded-md transition-all whitespace-nowrap text-center ${filter === f.key ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`flex-1 sm:flex-none px-2 py-1.5 text-[11px] sm:text-xs font-semibold rounded-md transition-all whitespace-nowrap ${filter === f.key ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                             {f.label}
                         </button>

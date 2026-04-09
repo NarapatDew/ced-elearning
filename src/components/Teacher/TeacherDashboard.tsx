@@ -32,6 +32,8 @@ import {
 import type { Course, UserProfile } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../common/LanguageToggle';
+import AtRiskPanel from './AtRiskPanel';
+import MessageTemplates from './MessageTemplates';
 
 // --- Types ---
 interface TeacherDashboardProps {
@@ -629,6 +631,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                {/* 3. At-Risk Panel & Message Templates Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-4 mt-8 min-h-[500px]">
+                    <div className="lg:col-span-8 h-full">
+                        <AtRiskPanel students={students} />
+                    </div>
+                    <div className="lg:col-span-4 h-full">
+                        <MessageTemplates />
                     </div>
                 </div>
 

@@ -3,6 +3,8 @@ import type { UserProfile, Course, Assignment, Submission } from '../../types';
 import StatCard from './StatCard';
 import ProgressRing from './ProgressRing';
 import AssignmentTimeline from './AssignmentTimeline';
+import UnifiedTodo from './UnifiedTodo';
+import CourseTrendDashboard from './CourseTrendDashboard';
 import { Folder, Award } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../common/LanguageToggle';
@@ -158,6 +160,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                                 )}
                             </div>
 
+                            {/* Course Trend Analytics */}
+                            {activeCourses.length > 0 && submissions.length > 0 && (
+                                <div className="mb-10">
+                                    <CourseTrendDashboard courses={courses} assignments={assignments} submissions={submissions} />
+                                </div>
+                            )}
+
                             {/* Archived Courses */}
                             {archivedCourses.length > 0 && (
                                 <>
@@ -221,9 +230,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                             </p>
                         </div>
 
-                        {/* Assignment Feed using only Active Assignments */}
-                        <div className="h-[400px]">
-                            <AssignmentTimeline assignments={activeAssignments} submissions={submissions} />
+                        {/* Unified Todo List */}
+                        <div className="h-[500px]">
+                            <UnifiedTodo courses={activeCourses} assignments={activeAssignments} submissions={submissions} />
                         </div>
                     </div>
 

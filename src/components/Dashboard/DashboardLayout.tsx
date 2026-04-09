@@ -3,7 +3,7 @@ import type { UserProfile, Course, Assignment, Submission } from '../../types';
 import StatCard from './StatCard';
 import ProgressRing from './ProgressRing';
 import AssignmentTimeline from './AssignmentTimeline';
-import { Folder, TrendingUp, Award } from 'lucide-react';
+import { Folder, Award } from 'lucide-react';
 
 interface DashboardLayoutProps {
     user: UserProfile;
@@ -14,15 +14,6 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assignments, submissions, onLogout }) => {
-    // Calculate Real XP
-    const totalXP = submissions.reduce((acc, sub) => {
-        // If graded, use the Grade. If just 'TURNED_IN', assume max points (or 100 if undefined)
-        if (sub.state === 'TURNED_IN' || sub.state === 'RETURNED') {
-            return acc + (sub.assignedGrade || 100);
-        }
-        return acc;
-    }, 0);
-
     // Calculate Global Completion
     const totalAssignments = assignments.length;
     const completedAssignments = submissions.filter(s => s.state === 'TURNED_IN' || s.state === 'RETURNED').length;
@@ -65,15 +56,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                 </div>
 
                 <div className="flex items-center gap-4 mt-2 md:mt-0 w-full md:w-auto justify-end">
-                    <div className="hidden sm:flex items-center gap-2 mr-4 bg-white/50 px-3 py-1 rounded-full border border-orange-100">
-                        <div className="text-right">
-                            <div className="text-xs font-bold text-gray-700">Level {Math.floor(totalXP / 500) + 1}</div>
-                            <div className="w-24 h-1.5 bg-gray-200 rounded-full mt-0.5 overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full" style={{ width: '45%' }} />
-                            </div>
-                        </div>
-                    </div>
-
                     <button
                         onClick={onLogout}
                         className="text-sm font-medium text-muted hover:text-red-600 px-3 py-1.5 rounded hover:bg-red-50 transition-colors mr-2"
@@ -94,9 +76,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                         {/* Metrics Row */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <StatCard
-                                title="Total XP"
-                                value={totalXP.toLocaleString()}
-                                icon={TrendingUp}
+                                title="Completed Assignments"
+                                value={completedAssignments}
+                                icon={Award}
                             />
                             <StatCard
                                 title="Active Courses"

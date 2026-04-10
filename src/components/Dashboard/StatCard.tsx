@@ -9,15 +9,13 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, className = '' }) => {
     return (
-        <div className={`bg-white border border-border rounded-lg p-5 shadow-card ${className}`}>
-            <div className="flex items-start justify-between">
-                <div>
-                    <h3 className="text-muted text-xs font-medium uppercase tracking-wider mb-1">{title}</h3>
-                    <p className="text-2xl font-sans text-text">{value}</p>
-                </div>
-                <div className="p-2 rounded-full bg-secondary text-primary">
-                    <Icon className="w-5 h-5" />
-                </div>
+        <div className={`bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-6px_rgba(0,0,0,0.08)] transition-all duration-300 flex items-center justify-between group ${className}`}>
+            <div>
+                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">{title}</h3>
+                <p className="text-3xl font-black text-gray-800 tracking-tight">{value}</p>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-gray-50 text-gray-400 group-hover:scale-110 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all duration-300">
+                <Icon size={24} strokeWidth={2} />
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { AlertCircle, Clock, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { AlertCircle, Clock, Sparkles, ArrowRight } from 'lucide-react';
 import type { Assignment, Submission } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -56,9 +56,10 @@ const SmartCompanion: React.FC<SmartCompanionProps> = ({ assignments, submission
                     : `Focus on "${missingTasks[0].title}" first. It's past due!`,
                 actionLink: missingTasks[0].alternateLink,
                 icon: AlertCircle,
-                colors: 'bg-red-50 border-red-200 text-red-800',
-                iconColors: 'text-red-500 bg-red-100',
-                btnColors: 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20'
+                colors: 'bg-white border border-red-100 border-l-[6px] border-l-red-500 shadow-[0_4px_20px_-4px_rgba(220,38,38,0.1)]',
+                titleColor: 'text-red-800',
+                iconColors: 'text-red-500 bg-red-50',
+                btnColors: 'bg-red-600 hover:bg-red-700 text-white shadow-md'
             };
         }
 
@@ -74,9 +75,10 @@ const SmartCompanion: React.FC<SmartCompanionProps> = ({ assignments, submission
                     : `Keep an eye on "${target.title}" due in ${target.daysUntilDue === 0 ? 'today' : target.daysUntilDue + ' days'}.`,
                 actionLink: target.alternateLink,
                 icon: Clock,
-                colors: 'bg-orange-50 border-orange-200 text-orange-900',
-                iconColors: 'text-orange-500 bg-orange-100',
-                btnColors: 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20'
+                colors: 'bg-white border border-amber-100 border-l-[6px] border-l-amber-400 shadow-[0_4px_20px_-4px_rgba(217,119,6,0.1)]',
+                titleColor: 'text-amber-900',
+                iconColors: 'text-amber-500 bg-amber-50',
+                btnColors: 'bg-amber-500 hover:bg-amber-600 text-white shadow-md'
             };
         }
 
@@ -89,8 +91,9 @@ const SmartCompanion: React.FC<SmartCompanionProps> = ({ assignments, submission
                 : 'You have caught up with all your tasks. No urgent deadlines approaching.',
             actionLink: null,
             icon: Sparkles,
-            colors: 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-emerald-900',
-            iconColors: 'text-emerald-500 bg-emerald-100',
+            colors: 'bg-white border border-emerald-100 border-l-[6px] border-l-emerald-400 shadow-[0_4px_20px_-4px_rgba(5,150,105,0.05)]',
+            titleColor: 'text-emerald-800',
+            iconColors: 'text-emerald-500 bg-emerald-50',
             btnColors: ''
         };
 
@@ -99,15 +102,15 @@ const SmartCompanion: React.FC<SmartCompanionProps> = ({ assignments, submission
     const Icon = advice.icon;
 
     return (
-        <div className={`w-full rounded-xl border shadow-sm p-4 relative overflow-hidden transition-all duration-300 ${advice.colors}`}>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex flex-row items-center gap-4 z-10 w-full sm:w-auto">
-                    <div className={`p-3 rounded-full shrink-0 ${advice.iconColors}`}>
-                        <Icon size={24} />
+        <div className={`w-full rounded-2xl relative overflow-hidden transition-all duration-300 group ${advice.colors}`}>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 p-5 md:p-6">
+                <div className="flex flex-row items-center gap-4 sm:gap-5 z-10 w-full sm:w-auto">
+                    <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-sm ${advice.iconColors}`}>
+                        <Icon size={28} strokeWidth={2.5} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-sm sm:text-base tracking-tight mb-0.5">{advice.title}</h3>
-                        <p className="text-xs sm:text-sm opacity-90 leading-snug max-w-xl">{advice.message}</p>
+                        <h3 className={`font-bold text-base sm:text-lg tracking-tight mb-0.5 ${advice.titleColor}`}>{advice.title}</h3>
+                        <p className="text-sm text-gray-600 leading-relaxed max-w-xl">{advice.message}</p>
                     </div>
                 </div>
                 
@@ -116,16 +119,16 @@ const SmartCompanion: React.FC<SmartCompanionProps> = ({ assignments, submission
                         href={advice.actionLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`shrink-0 w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-bold text-sm transition-all shadow-lg hover:-translate-y-0.5 active:scale-95 z-10 ${advice.btnColors}`}
+                        className={`shrink-0 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:-translate-y-0.5 active:scale-95 z-10 ${advice.btnColors}`}
                     >
-                        {language === 'th' ? 'ทำเดี๋ยวนี้เลย' : 'Do It Now'}
-                        <ExternalLink size={16} />
+                        {language === 'th' ? 'จัดการทันที' : 'Handle Now'}
+                        <ArrowRight size={16} strokeWidth={2.5} />
                     </a>
                 )}
             </div>
             
-            {/* Background design artifact */}
-            <div className="absolute -right-8 -top-8 text-black/5 opacity-10 pointer-events-none transform -rotate-12 scale-[3]">
+            {/* Minimalist Watermark */}
+            <div className="absolute -right-4 -bottom-8 text-black/5 opacity-0 group-hover:opacity-10 pointer-events-none transform -rotate-12 scale-[2.5] transition-opacity duration-700">
                 <Icon size={120} />
             </div>
         </div>

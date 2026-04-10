@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import type { UserProfile } from '../../types';
 import { fetchUserProfile } from '../../services/googleClassroom';
 import TeacherDashboard from '../Teacher/TeacherDashboard';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../common/LanguageToggle';
+import ParticleBackground from './ParticleBackground';
 
 interface LoginScreenProps {
     onLogin: (user: UserProfile, accessToken: string) => void;
@@ -17,6 +18,35 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
     const [teacherToken, setTeacherToken] = useState<string | null>(null);
     const { language, t } = useLanguage();
+
+    // Global Parallax Background Logic
+    const [bgOffset, setBgOffset] = useState({ x: 0, y: 0 });
+
+    const handleGlobalMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        // Calculate a gentle offset (divide by a large number for subtle movement)
+        const offsetX = (clientX - innerWidth / 2) / 40; 
+        const offsetY = (clientY - innerHeight / 2) / 40;
+        setBgOffset({ x: offsetX, y: offsetY });
+    };
+
+    // Spotlight effect logic
+    const loginFormRef = useRef<HTMLDivElement>(null);
+    const [cursorPos, setCursorPos] = useState({ x: -1000, y: -1000 });
+
+    const handleFormMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!loginFormRef.current) return;
+        const rect = loginFormRef.current.getBoundingClientRect();
+        setCursorPos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+    };
+
+    const handleFormMouseLeave = () => {
+        setCursorPos({ x: -1000, y: -1000 });
+    };
 
     const login = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -54,11 +84,34 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 lg:p-6 relative overflow-hidden bg-gradient-to-br from-[#e6fcf5] via-[#f0fdf4] to-[#ecfdf5]">
-            {/* Ambient Background Blobs */}
-            <div className="absolute top-10 left-10 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob"></div>
-            <div className="absolute top-10 right-10 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div 
+            className="min-h-screen flex items-center justify-center p-3 sm:p-4 lg:p-6 relative overflow-hidden bg-gradient-to-br from-[#e6fcf5] via-[#f0fdf4] to-[#ecfdf5]"
+            onMouseMove={handleGlobalMouseMove}
+        >
+            {/* Global Interactive Particle Network */}
+            <ParticleBackground />
+
+            {/* Ambient Background Blobs with Parallax Effect */}
+            <div 
+                className="absolute inset-0 z-0 pointer-events-none transition-transform duration-300 ease-out"
+                style={{ transform: `translate(${bgOffset.x}px, ${bgOffset.y}px)` }}
+            >
+                <div className="absolute top-10 left-10 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob"></div>
+            </div>
+            
+            <div 
+                className="absolute inset-0 z-0 pointer-events-none transition-transform duration-300 ease-out"
+                style={{ transform: `translate(${bgOffset.x * -1.5}px, ${bgOffset.y * -1.5}px)` }}
+            >
+                <div className="absolute top-10 right-10 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
+            </div>
+            
+            <div 
+                className="absolute inset-0 z-0 pointer-events-none transition-transform duration-300 ease-out"
+                style={{ transform: `translate(${bgOffset.x * 0.5}px, ${bgOffset.y * -2}px)` }}
+            >
+                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-4000"></div>
+            </div>
 
             <div className="w-full max-w-5xl bg-white/85 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col md:flex-row relative z-10 border border-white/50">
 
@@ -96,18 +149,43 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 </div>
 
                 {/* Right Side: Login Form */}
-                <div className="md:w-1/2 p-5 sm:p-7 md:p-9 lg:p-10 flex flex-col justify-center relative bg-white">
+                <div 
+                    ref={loginFormRef}
+                    onMouseMove={handleFormMouseMove}
+                    onMouseLeave={handleFormMouseLeave}
+                    className="md:w-1/2 p-5 sm:p-7 md:p-9 lg:p-10 flex flex-col justify-center relative bg-white overflow-hidden"
+                >
+                    {/* Interactive Dot Grid Reveal Effect */}
+                    <div 
+                        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+                        style={{
+                            backgroundImage: 'radial-gradient(#059669 1.5px, transparent 1.5px)',
+                            backgroundSize: '32px 32px',
+                            WebkitMaskImage: `radial-gradient(350px circle at ${cursorPos.x}px ${cursorPos.y}px, black, transparent)`,
+                            maskImage: `radial-gradient(350px circle at ${cursorPos.x}px ${cursorPos.y}px, black, transparent)`,
+                            opacity: 0.15
+                        }}
+                    />
+                    
+                    {/* Vibrant Glow Aura */}
+                    <div 
+                        className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300 mix-blend-overlay"
+                        style={{
+                            background: `radial-gradient(400px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(16, 185, 129, 0.2), transparent 70%)`
+                        }}
+                    />
+
                     {/* Relocated Language Toggle */}
-                    <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+                    <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
                         <LanguageToggle />
                     </div>
 
-                    <div className="text-center md:text-left mb-6 sm:mb-8 mt-4 sm:mt-0">
+                    <div className="text-center md:text-left mb-6 sm:mb-8 mt-4 sm:mt-0 relative z-10">
                         <h2 className="text-xl sm:text-2xl font-bold text-gray-800">{t('login.welcome')}</h2>
                         <p className="text-gray-500 mt-2 text-sm">{t('login.subtitle')}</p>
                     </div>
 
-                    <div className="space-y-4 sm:space-y-5 relative">
+                    <div className="space-y-4 sm:space-y-5 relative z-10">
                         {/* Student Mode Card */}
                         <section className="rounded-2xl border border-emerald-100 bg-emerald-50/30 p-4 sm:p-5 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_10px_40px_-10px_rgba(16,185,129,0.3)] hover:bg-white hover:border-emerald-300 relative z-0 hover:z-10 group">
                             <div className="flex items-start justify-between gap-3">

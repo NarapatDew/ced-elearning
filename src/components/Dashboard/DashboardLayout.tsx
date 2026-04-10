@@ -5,7 +5,7 @@ import ProgressRing from './ProgressRing';
 import UnifiedTodo from './UnifiedTodo';
 import SmartCompanion from './SmartCompanion';
 
-import { Folder, Award, AlertTriangle, ExternalLink, ChevronRight } from 'lucide-react';
+import { Folder, AlertTriangle, ExternalLink, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../common/LanguageToggle';
 

@@ -55,7 +55,7 @@ interface Student {
     id: string;
     name: string;
     avatarUrl: string;
-    completedAssignmentsCount: number;
+    completedAssignmentsCount?: number;
     missingAssignmentsCount: number;
 }
 
@@ -615,7 +615,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
                                         {students.length > 0 ? (
                                             students.map((student) => {
                                                 const isAtRisk = student.missingAssignmentsCount >= 3;
-                                                const completionPercentage = assignments.length > 0 ? Math.round((student.completedAssignmentsCount / assignments.length) * 100) : 0;
+                                                const completionPercentage = assignments.length > 0 ? Math.round(((student.completedAssignmentsCount || 0) / assignments.length) * 100) : 0;
                                                 return (
                                                     <tr key={student.id} className={`hover:bg-gray-50 transition-colors ${isAtRisk ? 'bg-red-50/30' : ''}`}>
                                                         <td className="px-6 py-4 flex items-center gap-3">

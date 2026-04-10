@@ -3,6 +3,7 @@ import type { UserProfile, Course, Assignment, Submission } from '../../types';
 import StatCard from './StatCard';
 import ProgressRing from './ProgressRing';
 import UnifiedTodo from './UnifiedTodo';
+import SmartCompanion from './SmartCompanion';
 
 import { Folder, Award, AlertTriangle, ExternalLink, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -99,6 +100,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                                 value={activeCourses.length}
                                 icon={Folder}
                             />
+                        </div>
+
+                        {/* Proactive Smart Companion Assistant */}
+                        <div className="w-full">
+                            <SmartCompanion assignments={activeAssignments} submissions={submissions} />
                         </div>
 
                         {/* Dashboard Grid Container: Mobile reverse, Desktop grid */}

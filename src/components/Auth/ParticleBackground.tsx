@@ -14,7 +14,6 @@ const ParticleBackground: React.FC = () => {
         let mouse = { x: -1000, y: -1000 };
 
         const resize = () => {
-            if (!canvas) return;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             init();
@@ -28,24 +27,21 @@ const ParticleBackground: React.FC = () => {
             speedY: number;
 
             constructor() {
-                this.x = Math.random() * (canvas?.width || window.innerWidth);
-                this.y = Math.random() * (canvas?.height || window.innerHeight);
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2 + 1;
                 this.speedX = Math.random() * 1 - 0.5;
                 this.speedY = Math.random() * 1 - 0.5;
             }
 
             update() {
-                const w = canvas?.width || window.innerWidth;
-                const h = canvas?.height || window.innerHeight;
-                
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                if (this.x > w) this.x = 0;
-                if (this.x < 0) this.x = w;
-                if (this.y > h) this.y = 0;
-                if (this.y < 0) this.y = h;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
             }
 
             draw() {
@@ -58,7 +54,6 @@ const ParticleBackground: React.FC = () => {
         }
 
         const init = () => {
-            if (!canvas) return;
             particles = [];
             const particleCount = (canvas.width * canvas.height) / 15000;
             for (let i = 0; i < particleCount; i++) {
@@ -77,9 +72,8 @@ const ParticleBackground: React.FC = () => {
         };
 
         const animate = () => {
-            if (!ctx || !canvas) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
@@ -102,7 +96,7 @@ const ParticleBackground: React.FC = () => {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    
+
                     if (distance < 100) {
                         ctx.beginPath();
                         ctx.strokeStyle = `rgba(16, 185, 129, ${(1 - distance / 100) * 0.2})`;
@@ -119,7 +113,7 @@ const ParticleBackground: React.FC = () => {
         window.addEventListener('resize', resize);
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseleave', handleMouseLeave);
-        
+
         resize();
         animate();
 

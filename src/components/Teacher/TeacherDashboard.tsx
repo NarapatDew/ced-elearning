@@ -204,7 +204,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
                                 <h1 className="text-lg font-bold text-slate-900 tracking-tight leading-none">
                                     {t('brand.name')}
                                 </h1>
-                                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1 antialiased">Instructor Portal</p>
+                                <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest mt-1 antialiased">{t('dashboard.instructorWorkspace')}</p>
                             </div>
                         </div>
 
@@ -445,7 +445,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
 
                     {/* Right: At-Risk Monitor (Small sidebar side) - 1 Column width */}
                     <div className="lg:col-span-1 h-full">
-                        <AtRiskPanel students={students} assignments={assignments} submissions={submissions} />
+                        <AtRiskPanel students={students} assignments={assignments} submissions={submissions} courseName={activeCourse?.name} />
                     </div>
 
                 </div>

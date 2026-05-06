@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import type { UserProfile } from '../../types';
 import { fetchUserProfile } from '../../services/googleClassroom';
-import TeacherDashboard from '../Teacher/TeacherDashboard';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../common/LanguageToggle';
 import ParticleBackground from './ParticleBackground';
@@ -21,10 +20,6 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const [loading, setLoading] = useState(false);
-    const [showTeacherDemo, setShowTeacherDemo] = useState(false);
-    const [isTeacherLogin, setIsTeacherLogin] = useState(false);
-    const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
-    const [teacherToken, setTeacherToken] = useState<string | null>(null);
     const { language, t } = useLanguage();
 
     // Global Parallax Background Logic
@@ -59,13 +54,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             setLoading(true);
             try {
                 const user = await fetchUserProfile(tokenResponse.access_token);
-                if (isTeacherLogin) {
-                    setTeacherToken(tokenResponse.access_token);
-                    setTeacherProfile(user);
-                    setShowTeacherDemo(true);
-                } else {
-                    onLogin(user, tokenResponse.access_token);
-                }
+                onLogin(user, tokenResponse.access_token);
             } catch (error) {
                 console.error('Failed to fetch user profile', error);
             } finally {
@@ -78,15 +67,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         },
         scope: 'https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.me.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.student-submissions.students.readonly https://www.googleapis.com/auth/classroom.profile.photos',
     });
-
-    const handleTeacherLogin = () => {
-        setIsTeacherLogin(true);
-        login();
-    };
-
-    if (showTeacherDemo) {
-        return <TeacherDashboard user={teacherProfile!} accessToken={teacherToken || undefined} onLogout={() => { setShowTeacherDemo(false); setTeacherToken(null); setIsTeacherLogin(false); setTeacherProfile(null); }} />;
-    }
 
     return (
         <div
@@ -249,14 +229,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         : 'Analyze performance, identify at-risk students, and manage your classes seamlessly.'}
                                 </p>
                                 <button
-                                    onClick={handleTeacherLogin}
+                                    onClick={() => login()}
                                     className="w-full h-12 flex items-center gap-2 bg-slate-50 text-slate-600 border border-slate-200 rounded-2xl hover:bg-slate-900 hover:text-white transition-all font-bold text-xs active:scale-95 px-3 group/btn"
                                 >
                                     <div className="shrink-0 bg-white p-1.5 rounded-xl shadow-sm ring-1 ring-slate-100 group-hover/btn:ring-white/20 transition-all">
                                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-3.5 h-3.5" />
                                     </div>
                                     <span className="flex-1 text-center whitespace-nowrap">
-                                        {t('login.openInstructor')}
+                                        {t('login.googleSignIn')}
                                     </span>
                                     <ArrowRight size={16} className="shrink-0 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                 </button>

@@ -7,7 +7,9 @@ import {
     FileText, 
     CheckCircle2,
     Clock,
-    Zap
+    Zap,
+    Copy,
+    Check
 } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -35,6 +37,7 @@ interface AtRiskPanelProps {
     students: Student[];
     assignments: Assignment[];
     submissions: Submission[];
+    courseName?: string;
 }
 
 const StudentAvatar: React.FC<{ url: string; name: string; className?: string }> = ({ url, name, className }) => {
@@ -51,13 +54,29 @@ const StudentAvatar: React.FC<{ url: string; name: string; className?: string }>
     );
 };
 
-const AtRiskPanel: React.FC<AtRiskPanelProps> = ({ students, assignments, submissions }) => {
-    const { language } = useLanguage();
+const AtRiskPanel: React.FC<AtRiskPanelProps> = ({ students, assignments, submissions, courseName = 'Classroom' }) => {
+    const { language, t } = useLanguage();
     const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     // Filter students who have 2 or more missing assignments
     const atRiskStudents = students.filter(s => s.missingAssignmentsCount >= 2)
         .sort((a, b) => b.missingAssignmentsCount - a.missingAssignmentsCount);
+
+    const handleCopyMessage = (student: Student, missingWork: Assignment[]) => {
+        const workList = missingWork.map(w => `"${w.title}"`).join(', ');
+        const messageTemplate = t('teacher.template.missing');
+        
+        const message = messageTemplate
+            .replace('{studentName}', student.name)
+            .replace('{courseName}', courseName)
+            .replace('{count}', student.missingAssignmentsCount.toString())
+            .replace('{workList}', workList);
+
+        navigator.clipboard.writeText(message);
+        setCopiedId(student.id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
 
     if (atRiskStudents.length === 0) {
         return (
@@ -168,10 +187,26 @@ const AtRiskPanel: React.FC<AtRiskPanelProps> = ({ students, assignments, submis
                                             <div className="h-px bg-slate-50 mb-4" />
                                             
                                             <div className="bg-rose-50/20 rounded-xl p-3 border border-rose-100/30">
-                                                <h5 className="text-xs font-bold text-rose-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                                                    <FileText size={10} />
-                                                    {language === 'th' ? 'รายการค้างส่ง' : 'To-do List'}
-                                                </h5>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h5 className="text-xs font-bold text-rose-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                        <FileText size={10} />
+                                                        {language === 'th' ? 'รายการค้างส่ง' : 'To-do List'}
+                                                    </h5>
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleCopyMessage(student, missingAssignments);
+                                                        }}
+                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                                                            copiedId === student.id 
+                                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
+                                                                : 'bg-white text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white shadow-sm'
+                                                        }`}
+                                                    >
+                                                        {copiedId === student.id ? <Check size={10} /> : <Copy size={10} />}
+                                                        {copiedId === student.id ? t('teacher.copied') : t('teacher.copyMessage')}
+                                                    </button>
+                                                </div>
                                                 
                                                 <div className="space-y-2">
                                                     {missingAssignments.length > 0 ? (

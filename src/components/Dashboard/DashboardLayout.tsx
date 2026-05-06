@@ -52,7 +52,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                                 {t('brand.name')}
                             </h1>
                             <p className="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] mt-1.5 antialiased">
-                                {language === 'th' ? 'Student Workspace' : 'Student Workspace'}
+                                {t('dashboard.studentWorkspace')}
                             </p>
                         </div>
                     </div>

@@ -51,4 +51,10 @@ export const translations: Record<string, TranslationMap> = {
   'todo.noAssignments': { th: 'ไม่มีงานในช่วงเวลานี้ เยี่ยมมาก!', en: 'No assignments in this period. Great job!' },
   'todo.open': { th: 'เปิด', en: 'Open' },
   'insight.title': { th: 'วิเคราะห์การเรียน', en: 'Learning Insights' },
+  'teacher.copyMessage': { th: 'คัดลอกข้อความติดตาม', en: 'Copy Follow-up' },
+  'teacher.copied': { th: 'คัดลอกแล้ว!', en: 'Copied!' },
+  'teacher.template.missing': {
+    th: 'สวัสดีครับ/ค่ะ {studentName}, ครูขออนุญาตติดตามงานในวิชา {courseName} ที่ยังค้างอยู่จำนวน {count} ชิ้น คือ {workList} เพื่อให้คะแนนเก็บเป็นปัจจุบัน รบกวนรีบดำเนินการส่งด้วยนะครับ/คะ',
+    en: 'Hi {studentName}, I\'m following up on {count} missing assignments in {courseName}: {workList}. Please submit them as soon as possible so I can update your grades.',
+  },
 };

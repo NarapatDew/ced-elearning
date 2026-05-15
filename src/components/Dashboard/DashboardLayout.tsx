@@ -91,7 +91,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                                 >
                                     <LogOut size={16} />
                                 </button>
-                            </div>>
+                            </div>
                         </div>
                     </div>
                 </div>

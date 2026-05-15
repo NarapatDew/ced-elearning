@@ -317,7 +317,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
                                 <button onClick={onLogout} className="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100" title={language === 'th' ? 'ออกจากระบบ' : 'Sign Out'}>
                                     <LogOut size={16} />
                                 </button>
-                            </div>>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -22,6 +22,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, accessToken, onLogout }) =>
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeRole, setActiveRole] = useState<UserRole>('student');
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const { language, t } = useLanguage();
 
     useEffect(() => {
@@ -68,6 +69,29 @@ const Dashboard: React.FC<DashboardProps> = ({ user, accessToken, onLogout }) =>
 
         fetchData();
     }, [accessToken]);
+
+    const handleRefresh = async () => {
+        if (!accessToken) return;
+        setIsRefreshing(true);
+        try {
+            const allCourses = await fetchCourses(accessToken);
+            setCourses(allCourses);
+            const taught = await fetchCourses(accessToken, 'me');
+            setTeacherCourses(taught);
+            if (allCourses.length > 0) {
+                const [fetchedAssignments, fetchedSubmissions] = await Promise.all([
+                    fetchAllAssignments(accessToken, allCourses),
+                    fetchAllSubmissions(accessToken, allCourses)
+                ]);
+                setAssignments(fetchedAssignments);
+                setSubmissions(fetchedSubmissions);
+            }
+        } catch (err: any) {
+            console.error('Failed to refresh dashboard data', err);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -132,7 +156,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, accessToken, onLogout }) =>
                         </button>
                     </div>
                 ) : (
-                    <DashboardLayout user={user} courses={courses} assignments={assignments} submissions={submissions} onLogout={onLogout} />
+                    <DashboardLayout user={user} courses={courses} assignments={assignments} submissions={submissions} onLogout={onLogout} onRefresh={handleRefresh} isRefreshing={isRefreshing} />
                 )
             ) : (
                 <TeacherDashboard user={user} accessToken={accessToken} onLogout={onLogout} />

@@ -10,7 +10,8 @@ import {
     Sparkles,
     LayoutDashboard,
     Target,
-    Filter
+    Filter,
+    RefreshCw
 } from 'lucide-react';
 import {
     fetchCourses,
@@ -83,6 +84,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     useEffect(() => {
         const loadRealData = async () => {
@@ -185,6 +187,13 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
         if (accessToken) {
             loadCourseData(accessToken, courseId);
         }
+    };
+
+    const handleRefresh = async () => {
+        if (!accessToken || !activeCourseId) return;
+        setIsRefreshing(true);
+        await loadCourseData(accessToken, activeCourseId);
+        setIsRefreshing(false);
     };
 
     return (
@@ -301,9 +310,14 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout, accessTok
                             <div className="relative">
                                 <img src={user?.photoUrl || `https://ui-avatars.com/api/?name=T&background=10b981&color=fff`} alt="Profile" className="w-9 h-9 rounded-2xl ring-4 ring-emerald-50 shadow-md object-cover" />
                             </div>
-                            <button onClick={onLogout} className="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100">
-                                <LogOut size={16} />
-                            </button>
+                            <div className="flex gap-2">
+                                <button onClick={handleRefresh} disabled={isRefreshing} className={`p-2 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-slate-100 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`} title={language === 'th' ? 'รีเฟรชข้อมูล' : 'Refresh Data'}>
+                                    <RefreshCw size={16} className={isRefreshing ? 'animate-spin text-emerald-500' : ''} />
+                                </button>
+                                <button onClick={onLogout} className="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100" title={language === 'th' ? 'ออกจากระบบ' : 'Sign Out'}>
+                                    <LogOut size={16} />
+                                </button>
+                            </div>>
                         </div>
                     </div>
                 </div>

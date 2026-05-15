@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut } from 'lucide-react';
+import { LogOut, RefreshCw } from 'lucide-react';
 import type { UserProfile, Course, Assignment, Submission } from '../../types';
 import ProgressRing from './ProgressRing';
 import UnifiedTodo from './UnifiedTodo';
@@ -13,9 +13,11 @@ interface DashboardLayoutProps {
     assignments: Assignment[];
     submissions: Submission[];
     onLogout: () => void;
+    onRefresh?: () => void;
+    isRefreshing?: boolean;
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assignments, submissions, onLogout }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assignments, submissions, onLogout, onRefresh, isRefreshing }) => {
     const { language, t } = useLanguage();
 
     // Calculate Global Completion
@@ -71,13 +73,25 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, courses, assign
                                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
                             </div>
                             <div className="h-8 w-px bg-slate-200 hidden md:block mx-1"></div>
-                            <button 
-                                onClick={onLogout}
-                                className="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100"
-                                title={language === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
-                            >
-                                <LogOut size={16} />
-                            </button>
+                            <div className="flex gap-2">
+                                {onRefresh && (
+                                    <button 
+                                        onClick={onRefresh}
+                                        disabled={isRefreshing}
+                                        className={`p-2 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-slate-100 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        title={language === 'th' ? 'รีเฟรชข้อมูล' : 'Refresh Data'}
+                                    >
+                                        <RefreshCw size={16} className={isRefreshing ? 'animate-spin text-emerald-500' : ''} />
+                                    </button>
+                                )}
+                                <button 
+                                    onClick={onLogout}
+                                    className="p-2 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100"
+                                    title={language === 'th' ? 'ออกจากระบบ' : 'Sign Out'}
+                                >
+                                    <LogOut size={16} />
+                                </button>
+                            </div>>
                         </div>
                     </div>
                 </div>

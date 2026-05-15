@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import LoginScreen from './components/Auth/LoginScreen';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -10,8 +10,29 @@ import { LanguageProvider } from './contexts/LanguageContext';
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'missing-client-id';
 
 function App() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    return localStorage.getItem('accessToken') || null;
+  });
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+  }, [accessToken]);
 
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
